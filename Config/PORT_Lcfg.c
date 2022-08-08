@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  *  FILE DESCRIPTION
  *  -----------------------------------------------------------------------------------------------------------------*/
-/**        \file  GPT_Lcfg.c
+/**        \file  FileName.c
  *        \brief  
  *
  *      \details  
@@ -13,13 +13,11 @@
  *  INCLUDES
  *********************************************************************************************************************/
 #include "Std_Types.h"
-#include "GPT_Types.h"
-#include "GPT_Cfg.h"
-#include "GPT.h"
+#include "PORT_Types.h"
+#include "PORT_Cfg.h"
 /**********************************************************************************************************************
 *  LOCAL MACROS CONSTANT\FUNCTION
-************     *********************************************************************************************************/
-#define     _16BITMAXVALUE       65536
+*********************************************************************************************************************/
 
 /**********************************************************************************************************************
  *  LOCAL DATA 
@@ -28,20 +26,12 @@
 /**********************************************************************************************************************
  *  GLOBAL DATA
  *********************************************************************************************************************/
-const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  = 
+const Port_ConfigType Port_Configurations [PINS_NUM]   = 
 {
-    //GPT_TIMER0,              GPT_PS_8, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    GPT_TIMER1,              GPT_PS_256, _16BITMAXVALUE, GPT_MODE_NORMAL, Gpt_Notfication_TIMER1,
-    //GPT_TIMER2,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER3,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER4,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER5,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER0,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER1,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER2,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER3,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER4,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER5,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
+    PORT_F1, PORT_PIN_OUTPIUT, PORT_DIO_MODE, PORT_PULL_UP_RES, PORT_OUTPUT_CURRENT_4MA, PORT_PIN_LOW_LEVEL,
+    PORT_B0, PORT_PIN_OUTPIUT, PORT_DIO_MODE, PORT_PULL_UP_RES, PORT_OUTPUT_CURRENT_2MA, PORT_PIN_HIGH_LEVEL,
+    PORT_C0, PORT_PIN_OUTPIUT, PORT_DIO_MODE, PORT_PULL_DOWN_RES, PORT_OUTPUT_CURRENT_8MA, PORT_PIN_LOW_LEVEL
+
 };
 /**********************************************************************************************************************
  *  LOCAL FUNCTION PROTOTYPES
@@ -58,5 +48,5 @@ const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  =
 
 
 /**********************************************************************************************************************
- *  END OF FILE: GPT_Lcfg.c
+ *  END OF FILE: FileName.c
  *********************************************************************************************************************/

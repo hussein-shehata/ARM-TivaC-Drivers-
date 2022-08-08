@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  *  FILE DESCRIPTION
  *  -----------------------------------------------------------------------------------------------------------------*/
-/**        \file  GPT_Lcfg.c
+/**        \file  LED.c
  *        \brief  
  *
  *      \details  
@@ -13,13 +13,12 @@
  *  INCLUDES
  *********************************************************************************************************************/
 #include "Std_Types.h"
-#include "GPT_Types.h"
-#include "GPT_Cfg.h"
-#include "GPT.h"
+#include "DIO.h"
+#include "LED.h"
+#include "LED_Config.h"
 /**********************************************************************************************************************
 *  LOCAL MACROS CONSTANT\FUNCTION
-************     *********************************************************************************************************/
-#define     _16BITMAXVALUE       65536
+*********************************************************************************************************************/
 
 /**********************************************************************************************************************
  *  LOCAL DATA 
@@ -28,21 +27,7 @@
 /**********************************************************************************************************************
  *  GLOBAL DATA
  *********************************************************************************************************************/
-const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  = 
-{
-    //GPT_TIMER0,              GPT_PS_8, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    GPT_TIMER1,              GPT_PS_256, _16BITMAXVALUE, GPT_MODE_NORMAL, Gpt_Notfication_TIMER1,
-    //GPT_TIMER2,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER3,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER4,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER5,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER0,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER1,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER2,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER3,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER4,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER5,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-};
+
 /**********************************************************************************************************************
  *  LOCAL FUNCTION PROTOTYPES
  *********************************************************************************************************************/
@@ -56,7 +41,28 @@ const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  =
  *********************************************************************************************************************/
 
 
+/******************************************************************************
+* \Syntax          : Std_ReturnType FunctionName(AnyType parameterName)        
+* \Description     : Describe this service                                    
+*                                                                             
+* \Sync\Async      : Synchronous                                               
+* \Reentrancy      : Non Reentrant                                             
+* \Parameters (in) : parameterName   Parameter Describtion                     
+* \Parameters (out): None                                                      
+* \Return value:   : Std_ReturnType  E_OK
+*                                    E_NOT_OK                                  
+*******************************************************************************/
+
+void LED_ON(void)
+{
+    Dio_WriteChannel(LED_PORT_PIN, STD_HIGH);
+}
+
+void LED_OFF(void)
+{
+    Dio_WriteChannel(LED_PORT_PIN, STD_LOW);
+}
 
 /**********************************************************************************************************************
- *  END OF FILE: GPT_Lcfg.c
+ *  END OF FILE: FileName.c
  *********************************************************************************************************************/

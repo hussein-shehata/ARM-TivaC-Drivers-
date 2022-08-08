@@ -2,26 +2,24 @@
 
  *  FILE DESCRIPTION
  *  -------------------------------------------------------------------------------------------------------------------
- *         File:  GPT_Types.h
- *       Module:  General purpose Timer
+ *         File:  PORT_Types.h
+ *       Module:  PORT
  *
- *  Description:  header file for General purpose Timer     
+ *  Description: header file for PORT Driver      
  *  
  *********************************************************************************************************************/
-#ifndef GPT_TYPES_H
-#define GPT_TYPES_H
+#ifndef PORT_TYPES_H
+#define PORT_TYPES_H
 
 /**********************************************************************************************************************
  * INCLUDES
  *********************************************************************************************************************/
-#include "Platform_Types.h"
-#include "GPT_Cfg.h"
+
+#include "PORT_Cfg.h"
+
 /**********************************************************************************************************************
  *  GLOBAL CONSTANT MACROS
  *********************************************************************************************************************/
-
-/* defining the num of timers in the MCU */
-
 
 
 /**********************************************************************************************************************
@@ -33,102 +31,81 @@
  *  GLOBAL DATA TYPES AND STRUCTURES
  *********************************************************************************************************************/
 
-typedef uint32  Gpt_ValueType ;
+typedef enum
+{
+    PORT_A0, PORT_A1, PORT_A2, PORT_A3, PORT_A4, PORT_A5, PORT_A6, PORT_A7,
+    PORT_B0, PORT_B1, PORT_B2, PORT_B3, PORT_B4, PORT_B5, PORT_B6, PORT_B7,
+    PORT_C0, PORT_C1, PORT_C2, PORT_C3, PORT_C4, PORT_C5, PORT_C6, PORT_C7,
+    PORT_D0, PORT_D1, PORT_D2, PORT_D3, PORT_D4, PORT_D5, PORT_D6, PORT_D7,
+    PORT_E0, PORT_E1, PORT_E2, PORT_E3, PORT_E4, PORT_E5, PORT_E6, PORT_E7,
+    PORT_F0, PORT_F1, PORT_F2, PORT_F3, PORT_F4, PORT_F5, PORT_F6, PORT_F7
 
-typedef void (*Gpt_CallBack_Ptr)(void)  ;   /* pointer to be used to call the  call back function */
-
-
-
-/*Declaring the enums used to configure the Timers */
-
+}Port_PinType;
 
 typedef enum 
 {
-    GPT_TIMER0,
-    GPT_TIMER1,
-    GPT_TIMER2,
-    GPT_TIMER3,
-    GPT_TIMER4,
-    GPT_TIMER5,
-
-    GPT_WIDE_TIMER0,
-    GPT_WIDE_TIMER1,
-    GPT_WIDE_TIMER2,
-    GPT_WIDE_TIMER3,
-    GPT_WIDE_TIMER4,
-    GPT_WIDE_TIMER5
-}Gpt_ChannelType;
-
-
-
+    PORT_PIN_INPUT,
+    PORT_PIN_OUTPIUT
+}Port_PinDirectionType;
 
 typedef enum 
 {
-    GPT_NO_PS = 1,
-    GPT_PS_2 = 2,
-    GPT_PS_4 = 4,
-    GPT_PS_8 = 8,
-    GPT_PS_16 = 16,
-    GPT_PS_32 = 32,
-    GPT_PS_64 = 64,
-    GPT_PS_128 = 128,
-    GPT_PS_256 = 255,
-    GPT_PS_512 = 512,
-    GPT_PS_1024 = 1024,
-    GPT_PS_2048 = 2048,
-    GPT_PS_4096 = 4096,
-    GPT_PS_8192 = 8192,
-    GPT_PS_16384 = 16384,
-    GPT_PS_32768 = 32768,
-    GPT_PS_65536 = 65535
-
-}Gpt_PrescaleValue;
-
-
-
+    PORT_DIO_MODE,
+    PORT_AF_1_MODE,
+    PORT_AF_2_MODE,
+    PORT_AF_3_MODE,
+    PORT_AF_4_MODE,
+    PORT_AF_5_MODE,
+    PORT_AF_6_MODE,
+    PORT_AF_7_MODE,
+    PORT_AF_8_MODE,
+    PORT_AF_9_MODE,
+    PORT_AF_10_MODE,
+    PORT_AF_11_MODE,
+    PORT_AF_12_MODE,
+    PORT_AF_13_MODE,
+    PORT_AF_14_MODE,
+    PORT_ANALOG_MODE
+}Port_PinModeType;
 
 typedef enum 
 {
-    GPT_ONE_SHOT,
-    GPT_PERIODIC
-}Gpt_ChannelMode;
-
-
-
-
-typedef enum 
-{
-    GPT_MODE_SLEEP =1 ,
-    GPT_MODE_NORMAL 
-}Gpt_Mode;
-
-
+    PORT_NO_INTERNAL_RES,
+    PORT_PULL_UP_RES,
+    PORT_PULL_DOWN_RES,
+    PORT_OPEN_DRAIN
+}Port_PinInterrnalAttachType;
 
 typedef enum 
 {
-    GPT_PREDEF_TIMER_1US_16BIT,
-    GPT_PREDEF_TIMER_1US_24BIT,
-    GPT_PREDEF_TIMER_1US_32BIT,
-    GPT_PREDEF_TIMER_100US_32BIT
-}Gpt_PredefTimerType;
+    PORT_OUTPUT_CURRENT_2MA,
+    PORT_OUTPUT_CURRENT_4MA,
+    PORT_OUTPUT_CURRENT_8MA
+
+}Port_PinOutputCurrentType;
+
+typedef enum 
+{
+    PORT_PIN_LOW_LEVEL,
+    PORT_PIN_HIGH_LEVEL
+}Port_PinLevelValue;
 
 
-/*Declaring the config struct used to config the Timer */
 
-typedef struct  
+typedef struct 
 {
     /* data */
-    Gpt_ChannelType     GptChannelId;
-    Gpt_PrescaleValue   GptChannelTickFrequency;
-    Gpt_ValueType       GptChannelTickValueMax;
-    Gpt_ChannelMode     ChannelMode;
-    Gpt_CallBack_Ptr    GptNotification;
+    Port_PinType                    PortPin;
+    Port_PinDirectionType           PortPinDirection;
+    Port_PinModeType                PortPinMode;
+    Port_PinInterrnalAttachType     PortPinInternal;
+    Port_PinOutputCurrentType       PortPinOPCurrent;
+    Port_PinLevelValue              PortPinLevelValue;
 
-}Gpt_ConfigType;
-
-extern const Gpt_ConfigType  Configurations_Timer[TIMERS_NUM] ;
+}Port_ConfigType;
 
 
+extern const Port_ConfigType Port_Configurations [PINS_NUM] ;
 
 
 /**********************************************************************************************************************

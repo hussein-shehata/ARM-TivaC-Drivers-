@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  *  FILE DESCRIPTION
  *  -----------------------------------------------------------------------------------------------------------------*/
-/**        \file  GPT_Lcfg.c
+/**        \file  Dio.c
  *        \brief  
  *
  *      \details  
@@ -13,13 +13,14 @@
  *  INCLUDES
  *********************************************************************************************************************/
 #include "Std_Types.h"
-#include "GPT_Types.h"
-#include "GPT_Cfg.h"
-#include "GPT.h"
+#include "DIO.h"
+#include "DIO_Regs.h"
+#include "DIO_Types.h"
+#include "Platform_Types.h"
+#include "BIT_MATH.h"
 /**********************************************************************************************************************
 *  LOCAL MACROS CONSTANT\FUNCTION
-************     *********************************************************************************************************/
-#define     _16BITMAXVALUE       65536
+*********************************************************************************************************************/
 
 /**********************************************************************************************************************
  *  LOCAL DATA 
@@ -28,21 +29,7 @@
 /**********************************************************************************************************************
  *  GLOBAL DATA
  *********************************************************************************************************************/
-const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  = 
-{
-    //GPT_TIMER0,              GPT_PS_8, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    GPT_TIMER1,              GPT_PS_256, _16BITMAXVALUE, GPT_MODE_NORMAL, Gpt_Notfication_TIMER1,
-    //GPT_TIMER2,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER3,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER4,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_TIMER5,              GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER0,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER1,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER2,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER3,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER4,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-    //GPT_WIDE_TIMER5,         GPT_NO_PS, _16BITMAXVALUE, GPT_MODE_NORMAL, NULL_PTR,
-};
+
 /**********************************************************************************************************************
  *  LOCAL FUNCTION PROTOTYPES
  *********************************************************************************************************************/
@@ -56,7 +43,59 @@ const Gpt_ConfigType Configurations_Timer[TIMERS_NUM]  =
  *********************************************************************************************************************/
 
 
+/******************************************************************************
+* \Syntax          : Std_ReturnType FunctionName(AnyType parameterName)        
+* \Description     : Describe this service                                    
+*                                                                             
+* \Sync\Async      : Synchronous                                               
+* \Reentrancy      : Non Reentrant                                             
+* \Parameters (in) : parameterName   Parameter Describtion                     
+* \Parameters (out): None                                                      
+* \Return value:   : Std_ReturnType  E_OK
+*                                    E_NOT_OK                                  
+*******************************************************************************/
+Dio_LevelType Dio_ReadChannel(Dio_ChannelType ChannelId)
+{
+    uint8 PortNum = ChannelId / 8 ;
+    uint8 PinNum =  ChannelId % 8 ; 
+	
+	return ( GET_BIT(GPIODATA(PortNum), PinNum) );
+}
 
+void Dio_WriteChannel(Dio_ChannelType ChannelId, Dio_LevelType Level)
+{
+    uint8 PortNum = ChannelId / 8 ;
+    uint8 PinNum =  ChannelId % 8 ; 
+	if (Level == STD_HIGH)
+	    SET_BIT(GPIODATA(PortNum), PinNum); 
+    
+    else if (Level == STD_LOW)
+        CLR_BIT(GPIODATA(PortNum), PinNum); 
+    else 
+		{
+        /* Do nothing */
+		}
+}
+
+Dio_PortLevelType Dio_ReadPort(Dio_PortType PortId)
+{
+    return (GPIODATA(PortId));
+}
+
+void Dio_WritePort (Dio_PortType PortId, Dio_PortLevelType Level)
+{
+    GPIODATA(PortId) = Level;
+}
+
+Dio_LevelType Dio_FlipChannel(Dio_ChannelType ChannelId)
+{
+    uint8 PortNum = ChannelId / 8 ;
+    uint8 PinNum =  ChannelId % 8 ; 
+
+	TOG_BIT(GPIODATA(PortNum), PinNum);
+
+    return ( GET_BIT(GPIODATA(PortNum), PinNum) ); /* return the new value in the bit after toggling */
+}
 /**********************************************************************************************************************
- *  END OF FILE: GPT_Lcfg.c
+ *  END OF FILE: Dio.c
  *********************************************************************************************************************/

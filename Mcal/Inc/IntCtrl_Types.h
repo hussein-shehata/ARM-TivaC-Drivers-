@@ -112,6 +112,8 @@ typedef enum
 	SSI0,
 	I2C0,
 	PWM0_Fault,
+	PWM0_Generator_0,
+	PWM0_Generator_1,
 	PWM0_Generator_2,
 	QEI0,
 	ADC0_Sequence_0,

@@ -2,25 +2,24 @@
 
  *  FILE DESCRIPTION
  *  -------------------------------------------------------------------------------------------------------------------
- *         File:  GPT_Types.h
- *       Module:  General purpose Timer
+ *         File:  Dio_Types.h
+ *       Module:  Dio
  *
- *  Description:  header file for General purpose Timer     
+ *  Description:  header file for Dio Driver  
  *  
  *********************************************************************************************************************/
-#ifndef GPT_TYPES_H
-#define GPT_TYPES_H
+#ifndef DIO_TYPES_H
+#define DIO_TYPES_H
 
 /**********************************************************************************************************************
  * INCLUDES
  *********************************************************************************************************************/
 #include "Platform_Types.h"
-#include "GPT_Cfg.h"
+
 /**********************************************************************************************************************
  *  GLOBAL CONSTANT MACROS
  *********************************************************************************************************************/
 
-/* defining the num of timers in the MCU */
 
 
 
@@ -33,103 +32,54 @@
  *  GLOBAL DATA TYPES AND STRUCTURES
  *********************************************************************************************************************/
 
-typedef uint32  Gpt_ValueType ;
-
-typedef void (*Gpt_CallBack_Ptr)(void)  ;   /* pointer to be used to call the  call back function */
-
+//typedef uint8           Dio_LevelType;
+//typedef uint8           Dio_PortLevelType;
 
 
-/*Declaring the enums used to configure the Timers */
+typedef enum
+{
+    PIN_A0, PIN_A1, PIN_A2, PIN_A3, PIN_A4, PIN_A5, PIN_A6, PIN_A7,
+    PIN_B0, PIN_B1, PIN_B2, PIN_B3, PIN_B4, PIN_B5, PIN_B6, PIN_B7,
+    PIN_C0, PIN_C1, PIN_C2, PIN_C3, PIN_C4, PIN_C5, PIN_C6, PIN_C7,
+    PIN_D0, PIN_D1, PIN_D2, PIN_D3, PIN_D4, PIN_D5, PIN_D6, PIN_D7,
+    PIN_E0, PIN_E1, PIN_E2, PIN_E3, PIN_E4, PIN_E5, PIN_E6, PIN_E7,
+    PIN_F0, PIN_F1, PIN_F2, PIN_F3, PIN_F4, PIN_F5, PIN_F6, PIN_F7
+
+}Dio_ChannelType;
+
+typedef enum 
+{
+    PORTA,
+    PORTB,
+    PORTC,
+    PORTD,
+    PORTE,
+    PORTF
+}Dio_PortType;
 
 
 typedef enum 
 {
-    GPT_TIMER0,
-    GPT_TIMER1,
-    GPT_TIMER2,
-    GPT_TIMER3,
-    GPT_TIMER4,
-    GPT_TIMER5,
+    STD_LOW,
+    STD_HIGH
+}Dio_LevelType;
 
-    GPT_WIDE_TIMER0,
-    GPT_WIDE_TIMER1,
-    GPT_WIDE_TIMER2,
-    GPT_WIDE_TIMER3,
-    GPT_WIDE_TIMER4,
-    GPT_WIDE_TIMER5
-}Gpt_ChannelType;
-
-
-
-
-typedef enum 
+typedef enum
 {
-    GPT_NO_PS = 1,
-    GPT_PS_2 = 2,
-    GPT_PS_4 = 4,
-    GPT_PS_8 = 8,
-    GPT_PS_16 = 16,
-    GPT_PS_32 = 32,
-    GPT_PS_64 = 64,
-    GPT_PS_128 = 128,
-    GPT_PS_256 = 255,
-    GPT_PS_512 = 512,
-    GPT_PS_1024 = 1024,
-    GPT_PS_2048 = 2048,
-    GPT_PS_4096 = 4096,
-    GPT_PS_8192 = 8192,
-    GPT_PS_16384 = 16384,
-    GPT_PS_32768 = 32768,
-    GPT_PS_65536 = 65535
-
-}Gpt_PrescaleValue;
+    PORT_STD_LOW = 0x00,
+    PORT_STD_HIGH = 0xFF
+}Dio_PortLevelType;
 
 
 
-
-typedef enum 
-{
-    GPT_ONE_SHOT,
-    GPT_PERIODIC
-}Gpt_ChannelMode;
-
-
-
-
-typedef enum 
-{
-    GPT_MODE_SLEEP =1 ,
-    GPT_MODE_NORMAL 
-}Gpt_Mode;
-
-
-
-typedef enum 
-{
-    GPT_PREDEF_TIMER_1US_16BIT,
-    GPT_PREDEF_TIMER_1US_24BIT,
-    GPT_PREDEF_TIMER_1US_32BIT,
-    GPT_PREDEF_TIMER_100US_32BIT
-}Gpt_PredefTimerType;
-
-
-/*Declaring the config struct used to config the Timer */
-
-typedef struct  
+typedef struct 
 {
     /* data */
-    Gpt_ChannelType     GptChannelId;
-    Gpt_PrescaleValue   GptChannelTickFrequency;
-    Gpt_ValueType       GptChannelTickValueMax;
-    Gpt_ChannelMode     ChannelMode;
-    Gpt_CallBack_Ptr    GptNotification;
-
-}Gpt_ConfigType;
-
-extern const Gpt_ConfigType  Configurations_Timer[TIMERS_NUM] ;
-
-
-
+    Dio_ChannelType     ChannelType;
+    Dio_PortType        PortType;
+    Dio_LevelType       LevelType;
+    Dio_PortLevelType   PortLevelType;
+};
 
 /**********************************************************************************************************************
  *  GLOBAL DATA PROTOTYPES

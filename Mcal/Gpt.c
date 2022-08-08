@@ -1,7 +1,7 @@
 /**********************************************************************************************************************
  *  FILE DESCRIPTION
  *  -----------------------------------------------------------------------------------------------------------------*/
-/**        \file  FileName.c
+/**        \file  Gpt.c
  *        \brief  
  *
  *      \details  
@@ -29,7 +29,7 @@
  *  LOCAL DATA 
  *********************************************************************************************************************/
 
-static void (*Gpt_CallBackPtr[TIMERS_NUM])(void) ;
+static void (*Gpt_CallBackPtr[MAX_NUM_TIMERS])(void) = {NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR, NULL_PTR};
 
 /**********************************************************************************************************************
  *  GLOBAL DATA
@@ -66,12 +66,6 @@ void Gpt_Init(const  Gpt_ConfigType* ConfigPtr)
     uint8 counter_for_numbers_of_timers_max;
     Gpt_ConfigType current_struct ;
 
-    /* For loop for making every call back pointer to function points to NULL PTR */
-    for (counter_for_numbers_of_timers_max = 0; counter_for_numbers_of_timers_max < MAX_NUM_TIMERS; counter_for_numbers_of_timers_max++)
-    {
-        Gpt_CallBackPtr[counter_for_numbers_of_timers_max] = NULL_PTR; 
-    }
-
     /* for loop for configuring each timer */
     for (index_of_timer = 0 ; index_of_timer < TIMERS_NUM; index_of_timer++)
     {
@@ -82,52 +76,7 @@ void Gpt_Init(const  Gpt_ConfigType* ConfigPtr)
          /* Set the callback function */
         Gpt_CallBackPtr[current_struct.GptChannelId] = current_struct.GptNotification;
 
-        //current_timer = current_struct.GptChannelId;
-        /* switch case to know which timer we are processing on in this iteration */
-        /*
-        switch (current_struct.GptChannelId)
-        {
-            case GPT_TIMER0:
-                current_timer = TIMER0;
-                break;
-            case GPT_TIMER1:
-                current_timer = TIMER1;
-                break;
-            case GPT_TIMER2:
-                current_timer = TIMER2;
-                break;
-            case GPT_TIMER3:
-                current_timer = TIMER3;
-                break;
-            case GPT_TIMER4:
-                current_timer = TIMER4;
-                break;
-            case GPT_TIMER5:
-                current_timer = TIMER5;
-                break;
-
-            case GPT_WIDE_TIMER0:
-                current_timer = WIDE_TIMER0;
-                break;
-            case GPT_WIDE_TIMER1:
-                current_timer = WIDE_TIMER1;
-                break;
-            case GPT_WIDE_TIMER2:
-                current_timer = WIDE_TIMER2;
-                break;
-            case GPT_WIDE_TIMER3:
-                current_timer = WIDE_TIMER3;
-                break;
-            case GPT_WIDE_TIMER4:
-                current_timer = WIDE_TIMER4;
-                break;
-            case GPT_WIDE_TIMER5:
-                current_timer = WIDE_TIMER5;
-                break;
-            default:
-                break;
-        }
-        */
+        
        /* Configuring the run mode of the timer */
        if (current_struct.GptChannelId < 6)
        {
@@ -140,8 +89,10 @@ void Gpt_Init(const  Gpt_ConfigType* ConfigPtr)
        }
 
 
-        CLR_BIT(GPTMCTL(current_struct.GptChannelId), GPTMCTL_TAEN_BIT) /* we have to make sure that the bit is cleared before any operations */
-        current_timer->GPTMCFG = 0x0;                 /*Write the GPTM Configuration Register (GPTMCFG) with a value of 0x0000.0000*/
+        CLR_BIT(GPTMCTL(current_struct.GptChannelId), GPTMCTL_TAEN_BIT); /* we have to make sure that the bit is cleared before any operations */
+        
+        GPTMCFG(current_struct.GptChannelId) = 0x0;                 /*Write the GPTM Configuration Register (GPTMCFG) with a value of 0x0000.0000*/
+        GPTMCFG(current_struct.GptChannelId) = 0x4;
 
         /* Clear the bits fields so I can config the mode */
         CLR_BIT(GPTMTAMR(current_struct.GptChannelId),0);
@@ -152,6 +103,9 @@ void Gpt_Init(const  Gpt_ConfigType* ConfigPtr)
          
         SET_BIT(GPTMTAMR(current_struct.GptChannelId),GPTMTAMR_TACDIR_BIT); /* makes the timer counts up*/
 
+        /********************************Configuring the prescaler************************* */
+        GPTMTAPR(current_struct.GptChannelId) = current_struct.GptChannelTickFrequency;
+
     }
 	
 }
@@ -160,10 +114,10 @@ void Gpt_Init(const  Gpt_ConfigType* ConfigPtr)
 void Gpt_DisableNotification(Gpt_ChannelType Channel)
 {
     /* Disable the Timer interrupt */
-    CLR_BIT(GPTMTAMR(current_struct.GptChannelId), GPTMTAMR_TAMIE_BIT);
+    CLR_BIT(GPTMTAMR(Channel), GPTMTAMR_TAMIE_BIT);
 
-    /* Disable the timer match interrupt */
-    CLR_BIT(GPTMIMR(current_struct.GptChannelId), GPTMIMR_TAMIM_BIT);
+    /* Disable the timer out interrupt */
+    CLR_BIT(GPTMIMR(Channel), GPTMIMR_TATOIM_BIT);
 }
 
 
@@ -172,15 +126,16 @@ void Gpt_EnableNotification(Gpt_ChannelType Channel)
     /* Enable the Timer interrupt */
     SET_BIT(GPTMTAMR(Channel), GPTMTAMR_TAMIE_BIT);
 
-    /* Enable the timer match interrupt */
-    SET_BIT(GPTMIMR(Channel), GPTMIMR_TAMIM_BIT);
+    /* Enable the timer out interrupt */
+    SET_BIT(GPTMIMR(Channel), GPTMIMR_TATOIM_BIT);
+
 }
 
 
 void Gpt_StartTimer(Gpt_ChannelType Channel, Gpt_ValueType Value)
 {
-    /* Load the value in GPTMTAMATCHR Register with the required matching value*/
-    GPTMTAMATCHR(Channel) = Value;
+    /* Load the value in GPTMTAILR Register with the required matching value*/
+    GPTMTAILR(Channel) = Value;
 
     /* Start the timer */
     SET_BIT(GPTMCTL(Channel), GPTMCTL_TAEN_BIT);
@@ -190,9 +145,23 @@ void Gpt_StartTimer(Gpt_ChannelType Channel, Gpt_ValueType Value)
 void Gpt_StopTimer(Gpt_ChannelType Channel)
 {
     /* Stop the timer  */
-    CLEAR_BIT(GPTMCTL(Channel), GPTMCTL_TAEN_BIT);
+    CLR_BIT(GPTMCTL(Channel), GPTMCTL_TAEN_BIT);
 }
 
+
+
+Gpt_ValueType Gpt_GetTimeElapsed (Gpt_ChannelType Channel)
+{
+    return (GPTMTAV(Channel));
+}
+
+
+Gpt_ValueType Gpt_GetTimeRemaining (Gpt_ChannelType Channel)
+{
+    Gpt_ValueType time_difference;
+    time_difference = GPTMTAILR(Channel) - GPTMTAV(Channel);
+    return (time_difference);
+}
 
 /* ********************************************************************************************
 *********************************the ISRs of all the timers************************************
@@ -203,7 +172,7 @@ void TIMER0A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER0]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER0])();
-        SET_BIT(GPTMICR(GPT_TIMER0),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER0),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -212,7 +181,7 @@ void TIMER1A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER1]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER1])();
-        SET_BIT(GPTMICR(GPT_TIMER1),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER1),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -221,7 +190,7 @@ void TIMER2A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER2]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER2])();
-        SET_BIT(GPTMICR(GPT_TIMER2),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER2),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -230,7 +199,7 @@ void TIMER3A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER3]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER3])();
-        SET_BIT(GPTMICR(GPT_TIMER3),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER3),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -239,7 +208,7 @@ void TIMER4A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER4]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER4])();
-        SET_BIT(GPTMICR(GPT_TIMER4),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER4),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -248,7 +217,7 @@ void TIMER5A_Handler(void)
     if(Gpt_CallBackPtr[GPT_TIMER5]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_TIMER5])();
-        SET_BIT(GPTMICR(GPT_TIMER5),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_TIMER5),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -258,7 +227,7 @@ void WTIMER0A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER0]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER0])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER0),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER0),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -268,8 +237,8 @@ void WTIMER1A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER1]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER1])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER1),GPTMICR_TAMCINT_BIT);
-    }
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER1),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
+    } 
 }
 
 void WTIMER2A_Handler(void)
@@ -277,7 +246,7 @@ void WTIMER2A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER2]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER2])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER2),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER2),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -286,7 +255,7 @@ void WTIMER3A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER3]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER3])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER3),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER3),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -295,7 +264,7 @@ void WTIMER4A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER4]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER4])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER4),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER4),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -304,7 +273,7 @@ void WTIMER5A_Handler(void)
     if(Gpt_CallBackPtr[GPT_WIDE_TIMER5]!= NULL_PTR)
     {
         (*Gpt_CallBackPtr[GPT_WIDE_TIMER5])();
-        SET_BIT(GPTMICR(GPT_WIDE_TIMER5),GPTMICR_TAMCINT_BIT);
+        SET_BIT(GPTMICR(GPT_WIDE_TIMER5),GPTMICR_TATOCINT_BIT); /*clearing the interrupt flag manually */
     }
 }
 
@@ -314,5 +283,5 @@ void WTIMER5A_Handler(void)
 
 
 /**********************************************************************************************************************
- *  END OF FILE: FileName.c
+ *  END OF FILE: Gpt.c
  *********************************************************************************************************************/

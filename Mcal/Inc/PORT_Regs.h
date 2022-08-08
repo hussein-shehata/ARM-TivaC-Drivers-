@@ -2,101 +2,21 @@
 
  *  FILE DESCRIPTION
  *  -------------------------------------------------------------------------------------------------------------------
- *         File:  Mcu_Hw.h
- *       Module:  Mcu_Hw
+ *         File:  PORT_Regs.h
+ *       Module:  PORT
  *
- *  Description:  header file for Registers definition    
+ *  Description: header file for PORT Registers    
  *  
  *********************************************************************************************************************/
-#ifndef MCU_HW_H
-#define MCU_HW_H
+#ifndef PORT_REGS_H
+#define PORT_REGS_H
 
 /**********************************************************************************************************************
  * INCLUDES
  *********************************************************************************************************************/
-#include "Std_Types.h"
+
 #include "PORT_Cfg.h"
-
-
-/**********************************************************************************************************************
- *  GLOBAL DATA TYPES AND STRUCTURES
- *********************************************************************************************************************/
-typedef struct 
-{
-    uint32 VECACT   :8;
-    uint32          :3;
-    uint32 RETBASE  :1;
-    uint32 VECPEND  :4;
-    uint32          :2;
-    uint32 ISRPEND  :1;
-    uint32 ISRPRE   :1;
-    uint32          :1;
-    uint32 PENDSTCLR:1;
-    uint32 PENDSTSET:1;
-    uint32 UNPENDSV :1;
-    uint32 PENDSV   :1;
-    uint32          :2;
-    uint32 NMISET   :1; 
-}INTCTRL_BF;
-typedef union 
-{
-    uint32 R;
-    INTCTRL_BF B;
-}INTCTRL_Tag;
-
-
-
-/******************************************************************************************
- * ***************************************IntCtrl Registers ******************************
- * ***************************************************************************************/
-
-typedef struct
-{
-
-    volatile uint32     CPUID;
-    volatile uint32     INTCTRL;
-    volatile uint32     VTABLE;
-    volatile uint32     APINT;
-    volatile uint32     SYSCTRL;
-    volatile uint32     CFGCTRL;
-    volatile uint32     SYSPRI1;
-    volatile uint32     SYSPRI2;
-    volatile uint32     SYSPRI3;
-    volatile uint32     SYSHNDCTRL;
-    volatile uint32     FAULTSTAT;
-    volatile uint32     HFAULTSTAT;
-} SCB_Regs;
-
-typedef struct
-{
-    /* data */
-    volatile uint32     EN[5];
-    volatile uint32     DIS[5];
-    volatile uint32     PEND[5];
-    volatile uint32     UNPEND[5];
-    volatile uint32     ACTIVE[5];
-    volatile uint32     PRI[35];
-
-}NVIC_Regs;
-
-
-
-
-
-#define     SCB_BASE_ADDRESS            0XE000ED00
-#define     SCB                         ((volatile SCB_Regs * ) SCB_BASE_ADDRESS)
-
-#define     NVIC_BASE_ADDRESS           0xE000E100
-#define     NIVC_SWTRIG                 (*((volatile uint32 *) 0XE000EF00))
-#define     NVIC                        ((volatile NVIC_Regs * ) NVIC_BASE_ADDRESS)
-
-
-
-
-/******************************************************************************************
- * ***************************************Port Registers ******************************
- * ***************************************************************************************/
-
+#include "Platform_Types.h"
 /**********************************************************************************************************************
  *  GLOBAL CONSTANT MACROS
  *********************************************************************************************************************/
@@ -195,95 +115,23 @@ typedef struct
 
 
 
-
-
-
-
-/******************************************************************************************
- * ***************************************GPIO Registers ******************************
- * ***************************************************************************************/
-/* It has its own defination because it is not in the sequence of increasing the offset */
-#define GPTMPP_OFFSET_ADDRESS               0xFC0
-
-/* Definations for the common bits in the register */
-#define GPTMCTL_TAEN_BIT                   0
-
-#define GPTMTAMR_TAMIE_BIT                 5
-#define GPTMTAMR_TACDIR_BIT                4
-#define GPTMTAMR_TAMR_BIT                  0
-
-#define GPTMIMR_TAMIM_BIT                  4
-#define GPTMIMR_TATOIM_BIT                 0
-//#define GPTMICR_TAMCINT_BIT                4
-
-#define GPTMICR_TATOCINT_BIT               0
-
-/* General Purpose Timer Run Mode Clock Gating Control Addresses */
-#define RCGCTIMER_ADDRESS               0x400FE604
-#define RCGCWTIMER_ADDRESS              0x400FE65C
-
-
 /**********************************************************************************************************************
- *  GLOBAL FUNCTION MACROS
+ *  GLOBAL DATA TYPES AND STRUCTURES
  *********************************************************************************************************************/
-/* To get the base address of the timer */
-#define GPT_BASE_ADDRESS(x)		    (x<8? ((0x40030000) + ((x)*0x1000)):((0x4004C000) + ((x-8)*0x1000)))
 
-#define GPTMCFG(x)                  *((volatile uint32*)GPT_BASE_ADDRESS(x))
-#define GPTMTAMR(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x004))
-#define GPTMTBMR(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x008))
-#define GPTMCTL(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x00C))
-#define GPTMSYNC(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x010))
-#define GPTMIMR(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x018))
-#define GPTMRIS(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x01C))
-#define GPTMMIS(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x020))
-#define GPTMICR(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x024))
-#define GPTMTAILR(x)                *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x028))
-#define GPTMBILR(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x02C))
-#define GPTMTAMATCHR(x)             *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x030))        
-#define GPTMTBMATCHR(x)             *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x034))
-#define GPTMTAPR(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x038))
-#define GPTMTBPR(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x03C))
-#define GPTMTAPMR(x)                *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x040))
-#define GPTMTBPMR(x)                *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x044))
-#define GPTMTAR(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x048))
-#define GPTMTBR(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x04C))
-#define GPTMTAV(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x050))
-#define GPTMTBV(x)                  *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x054))
-#define GPTMRTCPD(x)                *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x058))
-#define GPTMTAPS(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x05C))
-#define GPTMTBPS(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x060))
-#define GPTMTAPV(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x064))
-#define GPTMTBPV(x)                 *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0x068))
-#define GPTMPP(x)                   *((volatile uint32*)(GPT_BASE_ADDRESS(x) + 0xFC0))
-
-
-/* Registers to enable clock for the timers */
-#define RCGCTIMER                  *((volatile uint32*)(RCGCTIMER_ADDRESS))     
-#define RCGCWTIMER                 *((volatile uint32*)(RCGCWTIMER_ADDRESS)) 
-
-
-
-
-
-
-
-
-
-
-/**********************************************************************************************************************
- *  GLOBAL CONSTANT MACROS
- *********************************************************************************************************************/
 
 /**********************************************************************************************************************
  *  GLOBAL DATA PROTOTYPES
  *********************************************************************************************************************/
 
  
+/**********************************************************************************************************************
+ *  GLOBAL FUNCTION PROTOTYPES
+ *********************************************************************************************************************/
 
  
-#endif  /* MCU_HW_H */
+#endif  /* FILE_NAME_H */
 
 /**********************************************************************************************************************
- *  END OF FILE: Mcu_Hw.h
+ *  END OF FILE: Std_Types.h
  *********************************************************************************************************************/

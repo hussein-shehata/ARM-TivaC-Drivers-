@@ -67,6 +67,13 @@ void IntCrtl_Init(void)
 		uint8 PRI_num = CurrentStruct.InterruptPeripheralGates / 4;
 		uint8 PRI_index = CurrentStruct.InterruptPeripheralGates % 4;
 
+
+		/* when setting priority for these counters all of the above are disabled */
+		if (counter == 25 || counter == 26 || counter == 27 || counter == 28 || counter == 29 || counter == 30 || counter == 31)
+		{
+			continue;
+		}
+
 		if(PRI_index == 0 )
 		{
 			NVIC->PRI[PRI_num] |= (CurrentStruct.Priority << 5);
@@ -96,11 +103,12 @@ void IntCrtl_Init(void)
 
 		if (CurrentStruct.Interrupt_state == Enabled)
 		{
-			SET_BIT(NVIC->EN[flag], CurrentStruct.InterruptPeripheralGates);
+			NVIC->EN[flag] = 1<<CurrentStruct.InterruptPeripheralGates ;
 		}
+		
 		else
 		{
-			SET_BIT(NVIC->DIS[flag], CurrentStruct.InterruptPeripheralGates);
+			NVIC->DIS[flag] = 1<<CurrentStruct.InterruptPeripheralGates ;
 		}
 
 		

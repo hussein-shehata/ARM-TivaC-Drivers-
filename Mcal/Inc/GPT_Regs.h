@@ -2,10 +2,10 @@
 
  *  FILE DESCRIPTION
  *  -------------------------------------------------------------------------------------------------------------------
- *         File:  <Write File Name>
- *       Module:  -
+ *         File:  GPT_Regs.h
+ *       Module:  General purpose Timer
  *
- *  Description:  <Write File DESCRIPTION here>     
+ *  Description:  header file for General purpose Timer  Registers     
  *  
  *********************************************************************************************************************/
 #ifndef GPT_REGS_H
@@ -83,7 +83,9 @@
 
 #define GPTMIMR_TAMIM_BIT                  4
 #define GPTMIMR_TATOIM_BIT                 0
-#define GPTMICR_TAMCINT_BIT                4
+//#define GPTMICR_TAMCINT_BIT                4
+
+#define GPTMICR_TATOCINT_BIT               0
 
 /* General Purpose Timer Run Mode Clock Gating Control Addresses */
 #define RCGCTIMER_ADDRESS               0x400FE604
